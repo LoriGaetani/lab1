@@ -3,23 +3,23 @@ help:
     @just --list
 
 build:
-    cd backend && ./gradlew assemble
+    cd backend && chmod +x && ./gradlew assemble
 
 test:
-    cd backend && ./gradlew test
+    cd backend && chmod +x && ./gradlew test
 
 run-backend:
-    cd backend && ./gradlew bootRun
+    cd backend && chmod +x && ./gradlew bootRun
 
 docker-build:
-    cd backend && docker build -t backend:latest .
+    cd backend && chmod +x && docker build -t backend:latest .
 
 docker-run:
-    cd backend && docker run -d --name backend-container -p 8080:8080 backend:latest
+    cd backend && chmod +x && docker run -d --name backend-container -p 8080:8080 backend:latest
 
 docker-clean:
-    cd backend && docker stop backend-container || true
-    cd backend && docker rm backend-container || true
+    cd backend && chmod +x &&  docker stop backend-container || true
+    cd backend && chmod +x &&  docker rm backend-container || true
 
 verify: build test docker-build docker-clean docker-run
     @echo "⏳ Attendo che il servizio sia pronto (polling su /actuator/health)..."
