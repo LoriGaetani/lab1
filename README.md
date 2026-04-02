@@ -27,3 +27,7 @@ Gradle perchè prende la versione del progetto.
 Creare un comando che faccia in automatico build, test, docker run... in modo unificato
 sfruttando i comandi di prima e che possa essere usato per essere sicuri che una volta
 implementata una nuova feature questa rispetti dei requisiti di correttezza. 
+
+### Step5: CI pipeline
+Just permette di fare una pipeline solo in locale. Con le Github actions possiamo eseguirla 
+su un server remoto. 
