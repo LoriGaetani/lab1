@@ -43,11 +43,14 @@ jobs:
       - name: Tag e Push dell'immagine
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          # Il formato richiesto è ghcr.io/nome-utente/nome-repo/nome-immagine:tag
-          IMAGE_ID=ghcr.io/${{ github.repository }}/cpo-backend
+          # 1. Converte il nome del repository tutto in minuscolo
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           
-          # 1. Rinomina l'immagine locale creata da 'just verify'
+          # 2. Compone l'ID dell'immagine col nome in minuscolo
+          IMAGE_ID=ghcr.io/$REPO_LOWER/cpo-backend
+          
+          # 3. Rinomina l'immagine locale creata da 'just verify'
           docker tag backend:latest $IMAGE_ID:latest
           
-          # 2. Invia l'immagine al registro
+          # 4. Invia l'immagine al registro
           docker push $IMAGE_ID:latest

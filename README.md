@@ -31,3 +31,4 @@ implementata una nuova feature questa rispetti dei requisiti di correttezza.
 ### Step5: CI pipeline
 Just permette di fare una pipeline solo in locale. Con le Github actions possiamo eseguirla 
 su un server remoto. 
+Alla fine della pipeline pusho su un container registry. 
