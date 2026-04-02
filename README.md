@@ -13,3 +13,8 @@ Per fare dei test unitari si può usare **@DataJpaTest** per testare il DB senza
 con il vero db psql, ma usarne uno veloce in memoria H2 usa e getta. 
 Quando uso il metodo save, questo può essere usato sia per INSERT che per UPDATE. Usa uno 
 o l'altro a seconda se gli passo o no l'id dell'entità. 
+
+
+### Step2: Justfile
+creare justfile con i comandi utili per il progetto (run, test,...) per portabilità nel team
+e conformità con la CI pipeline. 

@@ -1,0 +1,12 @@
+default := "help"
+help:
+    @just --list
+
+build:
+    ./gradlew assemble
+
+test:
+    ./gradlew test
+
+run-backend:
+    ./gradlew bootRun
