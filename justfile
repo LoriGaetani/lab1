@@ -3,28 +3,28 @@ help:
     @just --list
 
 build:
-    ./gradlew assemble
+    cd backend && ./gradlew assemble
 
 test:
-    ./gradlew test
+    cd backend && ./gradlew test
 
 run-backend:
-    ./gradlew bootRun
+    cd backend && ./gradlew bootRun
 
 docker-build:
-    docker build -t backend:latest .
+    cd backend && docker build -t backend:latest .
 
 docker-run:
-    docker run -d --name backend-container -p 8080:8080 backend:latest
+    cd backend && docker run -d --name backend-container -p 8080:8080 backend:latest
 
 docker-clean:
-    docker stop backend-container || true
-    docker rm backend-container || true
+    cd backend && docker stop backend-container || true
+    cd backend && docker rm backend-container || true
 
 verify: build test docker-build docker-clean docker-run
     @echo "⏳ Attendo che il servizio sia pronto (polling su /actuator/health)..."
     @bash -c '\
-        for i in {1..30}; do \
+        for i in {1..60}; do \
             if curl -s -f http://localhost:8080/actuator/health > /dev/null; then \
                 echo -e "\n✅ Servizio pronto e in salute!"; \
                 exit 0; \
