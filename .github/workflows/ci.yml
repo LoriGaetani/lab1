@@ -1,0 +1,32 @@
+name: Backend CI Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-test-and-package:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout del codice
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Installa just
+        uses: extractions/setup-just@v2
+
+      # 1. ESEGUIAMO LA TUA RICETTA DI VERIFICA COMPLETA!
+      - name: Esegui la verifica completa (Build, Test, Docker Run, Health Check)
+        run: just verify
