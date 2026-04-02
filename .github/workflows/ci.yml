@@ -33,7 +33,7 @@ jobs:
         run: just verify
 
       - name: Login a GitHub Container Registry (GHCR)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag e Push dell'immagine
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           # Il formato richiesto è ghcr.io/nome-utente/nome-repo/nome-immagine:tag
           IMAGE_ID=ghcr.io/${{ github.repository }}/cpo-backend
