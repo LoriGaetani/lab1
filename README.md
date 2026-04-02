@@ -18,3 +18,7 @@ o l'altro a seconda se gli passo o no l'id dell'entità.
 ### Step2: Justfile
 creare justfile con i comandi utili per il progetto (run, test,...) per portabilità nel team
 e conformità con la CI pipeline. 
+
+### Step3: Container Docker
+Usare Gradlew (un Wrapper di Gradle) ho il vantaggio che non conflitti tra le dipendenze
+Gradle perchè prende la versione del progetto. 
