@@ -30,8 +30,8 @@ jobs:
       - name: Installa just
         uses: extractions/setup-just@v2
 
-      #- name: Esegui la verifica completa
-       # run: just verify
+      - name: Esegui la verifica completa
+        run: just verify
 
       - name: Estrai la versione dal Tag
         if: startsWith(github.ref, 'refs/tags/v')
