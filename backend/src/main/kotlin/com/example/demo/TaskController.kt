@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["*"]) // Allow Vite dev server
 class TaskController(private val taskService: TaskService) {
 
-    @GetMapping
+    @GetMapping("/hello")
     fun hello() = "Hello World"
 
     @GetMapping
