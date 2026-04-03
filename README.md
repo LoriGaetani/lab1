@@ -35,6 +35,7 @@ Alla fine della pipeline pusho su un container registry.
 
 Quando l'utente fa il commit gli mette un tag v*.*.* e il valore viene usato per accedere 
 alla repo dove sono i manifest per aggiornare il tag nei manifest k8s. 
+commit, Git, new tag, push (push tags X)
 
 
 
