@@ -83,7 +83,7 @@ jobs:
 
           version = "${{ env.VERSION }}"
           image_id = "${{ env.IMAGE_ID }}"
-          file_path = Path("DevOps/cpo-backend-charts/values.yaml")
+          file_path = Path("DevOps/cpo-backend-chart/values.yaml")
 
           data = yaml.safe_load(file_path.read_text())
 
@@ -105,7 +105,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add cpo-backend-charts/values.yaml
+          git add cpo-backend-chart/values.yaml
 
           if git diff --cached --quiet; then
             echo "Nessuna modifica da committare"
