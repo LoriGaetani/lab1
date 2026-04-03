@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*
 class TaskController(private val taskService: TaskService) {
 
     @GetMapping
+    fun hello() = "Hello World"
+
+    @GetMapping
     fun getAllTasks(): List<Task> = taskService.getAllTasks()
 
     @GetMapping("/{id}")
