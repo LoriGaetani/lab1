@@ -1,6 +1,6 @@
 ```angular2html
 git init
-git add remote <URL>
+git add remote url
 ```
 
 ### Step 1: Verificabilità
@@ -32,3 +32,41 @@ implementata una nuova feature questa rispetti dei requisiti di correttezza.
 Just permette di fare una pipeline solo in locale. Con le Github actions possiamo eseguirla 
 su un server remoto. 
 Alla fine della pipeline pusho su un container registry. 
+
+Quando l'utente fa il commit gli mette un tag v*.*.* e il valore viene usato per accedere 
+alla repo dove sono i manifest per aggiornare il tag nei manifest k8s. 
+
+
+
+
+
+1) Come generare il token
+
+Su GitHub:
+
+apri Settings del tuo account
+vai su Developer settings
+Personal access tokens
+Fine-grained tokens
+Generate new token
+
+Quando lo crei, imposta:
+
+Repository access: seleziona solo LoriGaetani/DevOps
+Permissions: almeno Contents: Read and write
+Metadata: Read
+metti anche una scadenza ragionevole, perché GitHub raccomanda di non lasciare token permanenti se non necessario.
+
+Per il tuo caso basta un token che possa fare commit e push sul repo del chart. Non serve dargli accesso ad altri repo.
+
+2) Come “nasconderlo”
+
+Non lo metti mai nel workflow in chiaro. Lo salvi come repository secret nel repo del backend:
+
+vai nel repo dove gira la pipeline
+Settings
+Secrets and variables
+Actions
+New repository secret
+Nome: HELM_REPO_PAT
+Valore: incolla il token

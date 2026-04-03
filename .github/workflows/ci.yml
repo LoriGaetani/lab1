@@ -3,6 +3,8 @@ name: Backend CI Pipeline
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches: [ "master" ]
 
@@ -28,29 +30,87 @@ jobs:
       - name: Installa just
         uses: extractions/setup-just@v2
 
-      # 1. ESEGUIAMO LA TUA RICETTA DI VERIFICA COMPLETA!
-      - name: Esegui la verifica completa (Build, Test, Docker Run, Health Check)
+      - name: Esegui la verifica completa
         run: just verify
 
+      - name: Estrai la versione dal Tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
       - name: Login a GitHub Container Registry (GHCR)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}          # Usa in automatico il tuo username
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Tag e Push dell'immagine
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      - name: Tag e Push dell'immagine (SemVer)
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
-          # 1. Converte il nome del repository tutto in minuscolo
           REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          
-          # 2. Compone l'ID dell'immagine col nome in minuscolo
           IMAGE_ID=ghcr.io/$REPO_LOWER/cpo-backend
-          
-          # 3. Rinomina l'immagine locale creata da 'just verify'
-          docker tag backend:latest $IMAGE_ID:latest
-          
-          # 4. Invia l'immagine al registro
-          docker push $IMAGE_ID:latest
+
+          docker tag backend:latest $IMAGE_ID:${{ env.VERSION }}
+          docker push $IMAGE_ID:${{ env.VERSION }}
+
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
+
+      - name: Checkout repo Helm
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/checkout@v4
+        with:
+          repository: LoriGaetani/DevOps
+          token: ${{ secrets.HELM_REPO_PAT }}
+          path: DevOps
+
+      - name: Setup Python
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Installa PyYAML
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: pip install pyyaml
+
+      - name: Aggiorna values.yaml
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          python <<'PY'
+          import yaml
+          from pathlib import Path
+
+          version = "${{ env.VERSION }}"
+          image_id = "${{ env.IMAGE_ID }}"
+          file_path = Path("DevOps/cpo-backend/values.yaml")
+
+          data = yaml.safe_load(file_path.read_text())
+
+          if "image" not in data:
+              data["image"] = {}
+
+          data["image"]["repository"] = image_id
+          data["image"]["tag"] = version
+
+          file_path.write_text(
+              yaml.safe_dump(data, sort_keys=False, default_flow_style=False)
+          )
+          PY
+
+      - name: Commit e push del chart aggiornato
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd DevOps
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add cpo-backend/values.yaml
+
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da committare"
+            exit 0
+          fi
+
+          git commit -m "chore(cpo-backend): bump image to ${{ env.VERSION }}"
+          git push
